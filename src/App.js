@@ -1,23 +1,21 @@
-import logo from './logo.svg';
 import './App.css';
-import Home from './Components/home';
+import Page from './components/Page';
 
 
 function App() {
   return (
     <div className="App">
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-      <Home/>
-       <Home/> 
+      I'm appp
+    <Page />
+    <Page />
+    <Page />
+    <Page />
+    <Page />
+    <Page />
+    <Page />
+    <Page />
+    <Page />
+    <Page />
     </div>
   );
 }
