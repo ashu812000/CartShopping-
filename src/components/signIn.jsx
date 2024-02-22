@@ -3,17 +3,14 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { addData, db, findWhere, findWithNWhere } from '../utils/firebase';
-
-import {collection, getDocs, query, where,and} from "firebase/firestore";
-
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import {db, findWhere} from '../utils/firebase';
+import {collection, getDocs, query, where} from "firebase/firestore";
 
 
 const defaultTheme = createTheme();
@@ -23,31 +20,23 @@ export default function SignIn() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         let response = await findWhere("users", "email", "==", data.get("email"))
-        console.log("response :: ", response)
         if (response.length) {
             const colRef = collection(db, "users");
-            let queryData = query(colRef, and(where('email', '==', data.get("email")),where("password", "==", data.get("password"))));
-            const querySnapshot = await getDocs(queryData);
-            let res = [];
+            const querySnapshot = await getDocs(query(colRef, where('email', '==', data.get("email"))));
             querySnapshot.forEach((doc) => {
-                let docData = doc.data()
-                console.log("doc :: ",docData)
-                    res.push(doc.data());
+                const userData = doc.data();
+                if (userData.password === data.get("password")) {
+                    console.log("yes :: ")
+                    // @todo navigate to home
                 }
-            );
-            console.log("password check :: ", res)
+            });
         }
-        // response = await addData("users", {
-        //     email: data.get('email'),
-        //     password: data.get('password'),
-        // }).then()
-        console.log("response :: ", response)
     };
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Grid container component="main" sx={{ height: '100vh' }}>
-                <CssBaseline />
+            <Grid container component="main" sx={{height: '100vh'}}>
+                <CssBaseline/>
                 <Grid
                     item
                     xs={false}
@@ -72,13 +61,13 @@ export default function SignIn() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
+                        <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                            <LockOutlinedIcon/>
                         </Avatar>
                         <Typography component="h1" variant="h5">
                             Sign in
                         </Typography>
-                        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                        <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 1}}>
                             <TextField
                                 margin="normal"
                                 required
@@ -104,7 +93,7 @@ export default function SignIn() {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{mt: 3, mb: 2}}
                             >
                                 Sign In
                             </Button>
