@@ -1,0 +1,45 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0 10px 30px;
+    background-color: #000000;
+    color: white;
+  }
+  
+  .company-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .cart-icon {
+    padding-right: 30px;
+    float: right;
+  }
+  
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0 10px 30px;
+    background-color: #000000;
+    color: white;
+  }
+  
+  .company-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .social-icons {
+    display: flex;
+    padding-right: 30px;
+  }
+  
+  .social-icon {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
