@@ -16,8 +16,8 @@
 
 .cart-icon {
     display: flex;
-    padding-right: 30px;
-    gap: 10px;
+    padding-right: 40px;
+    gap: 15px;
     float: right;
 }
 
@@ -59,4 +59,19 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 5px;
     margin-top: 15px;
+}
+
+.showLoader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #006CB5;
+    background: rgba(0, 0, 0, 0.5); /* Adjust the alpha value for the background color */
+    z-index: 1000; /* Make sure the loader is on top of other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 }

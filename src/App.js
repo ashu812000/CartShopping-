@@ -10,10 +10,13 @@ import Footer from "./components/footer";
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import {OrderHistory} from "./components/orderHistory";
-import { Box } from '@mui/material';
+import {Box} from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+import {LoaderContext} from "./utils/Context";
 
 function App() {
     const [user, setUser] = useState()
+    const [showLoader, setShowLoader] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,22 +27,28 @@ function App() {
         setUser(storedUser);
     }, [navigate]);
     return (
-        <div className="App">
-            <ToastContainer/>
-            <Box sx={{
-              width: "100%"
+        <LoaderContext.Provider value={{
+            showLoader: showLoader,
+            setShowLoader: setShowLoader
+        }}>
+            <div className="App">
+                <ToastContainer/>
+                <Box sx={{
+                    width: "100%"
 
-            }}>
-            {user && <Header/>}
-            </Box>
-            <Routes>
-                <Route path="/" element={<SignIn/>}/>
-                <Route path="/home" element={user ? <Home/> : <SignIn/>}/>
-                <Route path="/cart" element={user ? <Cart/> : <SignIn/>}/>
-                <Route path="/orderHistory" element={user ? <OrderHistory/> : <SignIn/>}/>
-            </Routes>
-            {user && <Footer/>}
-        </div>
+                }}>
+                    {user && <Header/>}
+                </Box>
+                {showLoader && <Box className={"showLoader"}><CircularProgress/></Box>}
+                <Routes>
+                    <Route path="/" element={<SignIn/>}/>
+                    <Route path="/home" element={user ? <Home/> : <SignIn/>}/>
+                    <Route path="/cart" element={user ? <Cart/> : <SignIn/>}/>
+                    <Route path="/orderHistory" element={user ? <OrderHistory/> : <SignIn/>}/>
+                </Routes>
+                {user && <Footer/>}
+            </div>
+        </LoaderContext.Provider>
     );
 }
 

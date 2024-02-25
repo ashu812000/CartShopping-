@@ -1,28 +1,59 @@
 import {Box, Button, Card, CardContent, Container, Grid, IconButton, Typography} from "@mui/material";
 import {successToast} from "../utils/constant";
-import {useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import {addData, findWhere, updateProduct} from "../utils/firebase";
+import {LoaderContext} from "../utils/Context";
 
 
 export const Cart = () => {
-    const [cartItems, setCartItems] = useState([
-        {id: 1, name: 'Product 1', quantity: 1},
-        {id: 2, name: 'Product 2', quantity: 1},
-        {id: 3, name: 'Product 3', quantity: 1},
-    ]);
+    const [cartData, setCartData] = useState([])
+    let {setShowLoader} = useContext(LoaderContext);
+    const [totalAmount, setTotalAmount] = useState(0)
 
-    const handleQuantityChange = (id, quantity) => {
-        const newCartItems = cartItems.map((item) =>
-            item.id === id ? {...item, quantity} : item
-        );
-        setCartItems(newCartItems);
+    useEffect(() => {
+        getCartData().then((res) => {
+
+        })
+    }, []);
+
+    const getCartData = async () => {
+        let response = await findWhere("cart", "id", "==", localStorage.getItem("email"))
+        let amount = 0
+        response.map(item => {
+            amount = amount + item.price * item.quantity
+        });
+        setTotalAmount(amount)
+        setCartData(response)
+    }
+
+    const handleRemoveItem = (data) => {
+        setShowLoader(true)
+        updateProduct("cart", data, "delete").then()
+        getCartData().then()
+        setShowLoader(false)
     };
 
-    const handleRemoveItem = (id) => {
-        const newCartItems = cartItems.filter((item) => item.id !== id);
-        setCartItems(newCartItems);
+    const handleQuantityChange = async (id, newQuantity) => {
+        setShowLoader(true)
+        let data
+        let amount = 0
+        const updatedCartItems = cartData.map(item => {
+            if (item.productId === id) {
+                data = {...item, quantity: newQuantity}
+                amount = amount + item.price * newQuantity
+                return {...item, quantity: newQuantity};
+            } else {
+                amount = amount + item.price * item.quantity
+            }
+            return item;
+        });
+        setTotalAmount(amount)
+        await updateProduct("cart", data)
+        setCartData(updatedCartItems);
+        setShowLoader(false)
     };
     return (
         <Box sx={{
@@ -38,42 +69,43 @@ export const Cart = () => {
                 <Typography variant="h4" gutterBottom>
                     Shopping Cart
                 </Typography>
-                {cartItems.map((item) => (
-                    <Card key={item.id} className={"card"}>
+                {cartData.map((item, index) => (
+                    <Card key={Math.random()} className={"card"}>
                         <CardContent>
-                            <Grid container spacing={2} alignItems="center">
-                                <Grid item xs={3}>
-                                    <Typography>{item.name}</Typography>
+                            <Grid container spacing={1} alignItems="center">
+                                <Grid item xs={1}>
+                                    <img src={item.image} alt="logo" width={80} height={80}
+                                           />
                                 </Grid>
                                 <Grid item xs={3}>
+                                    <Typography>{item.title}</Typography>
+                                </Grid>
+                                <Grid item xs={2}>
                                     <IconButton
                                         onClick={() =>
-                                            handleQuantityChange(
-                                                item.id,
-                                                Math.max(item.quantity - 1, 1)
-                                            )
+                                            handleQuantityChange(item.productId, Math.max(item.quantity - 1, 1))
                                         }
                                     >
-                                        <RemoveIcon />
+                                        <RemoveIcon/>
                                     </IconButton>
                                     {item.quantity}
                                     <IconButton
                                         onClick={() =>
-                                            handleQuantityChange(item.id, item.quantity + 1)
+                                            handleQuantityChange(item.productId, Math.max(item.quantity + 1, 1))
                                         }
                                     >
-                                        <AddIcon />
+                                        <AddIcon/>
                                     </IconButton>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Typography>${item.quantity * 10}</Typography>
+                                    <Typography>₹ {item.quantity * item.price}</Typography>
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Button
                                         variant="contained"
-                                        color="secondary"
-                                        startIcon={<DeleteIcon />}
-                                        onClick={() => handleRemoveItem(item.id)}
+                                        color="error"
+                                        startIcon={<DeleteIcon/>}
+                                        onClick={() => handleRemoveItem(item)}
                                     >
                                         Remove
                                     </Button>
@@ -90,9 +122,10 @@ export const Cart = () => {
                 width: "100%",
                 gap: "10",
                 position: "fixed",
-                bottom: 35,
+                bottom: 33,
                 height: "50px",
-                margin: "10px 0 10px 0"
+                margin: "10px 0 10px 0",
+                backgroundColor: "#d4cece"
             }}>
                 <Typography sx={{
                     display: "flex",
@@ -100,14 +133,20 @@ export const Cart = () => {
                     justifyContent: "center",
                     width: "50%"
                 }}>
-                    TOTAL AMOUNT
+                    TOTAL AMOUNT = ₹ {totalAmount}
                 </Typography>
-                <Button variant={"contained"} sx={{
+                <Button variant={"contained"} color="success" sx={{
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                     width: "50%"
-                }} onClick={() => successToast("Order Placed Successfully")}>
+                }} onClick={() => {
+                    successToast("Order Placed Successfully")
+                    let data = {
+                        email: localStorage.getItem("email"), items: cartData
+                    }
+                    addData("orders", data).then()
+                }}>
                     CREATE ORDER
                 </Button>
             </Box>

@@ -1,9 +1,19 @@
 // Import the functions you need from the SDKs you need
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import {addDoc, updateDoc, collection, doc, getDocs, getFirestore, query, setDoc, where, and} from "firebase/firestore";
+import {initializeApp} from "firebase/app";
+import {
+    addDoc,
+    and,
+    collection,
+    deleteDoc,
+    doc,
+    getDocs,
+    getFirestore,
+    query,
+    updateDoc,
+    where
+} from "firebase/firestore";
 
-// TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
@@ -33,63 +43,60 @@ export async function findWhere(tableName, whereField, whereOpt, whereValue) {
     return res;
 }
 
-export async function findWithNWhere(tableName, whereArr) {
-    const q = query(collection(db, tableName), ...whereArr);
-    const querySnapshot = await getDocs(q);
-    let res = [];
-    querySnapshot.forEach((doc) => {
-        console.log("doc :: ",doc.data())
-            res.push(doc.data());
-        }
-    );
-    return res;
-}
-
-export const updateProductCart = async (tableName, data) =>{
-    try{
-
-    }
-    catch {
-
-    }
-}
-
 export const addProduct = async (tableName, data) => {
-    try{
-        
+    try {
         const cartProduct = collection(db, 'cart')
-        
-        const productPresent = query(cartProduct , and(where('productId', '==' , data.productId), where('id', '==', data.id)))
-        
+        const productPresent = query(cartProduct, and(where('productId', '==', data.productId), where('id', '==', data.id)))
         const querySnapshot = await getDocs(productPresent);
         let id;
         let number;
-        querySnapshot.docs.map((doc)=>{
-            console.log("doc data :: ",doc.data(), doc.id)
+        querySnapshot.docs.map((doc) => {
+            console.log("doc data :: ", doc.data(), doc.id)
             number = doc.data().quantity;
             id = doc.id;
         })
         console.log("vbdhfkbvkjdfnvjkdjkn")
-        console.log("hdvkfhdhvfgkjvbhfg",querySnapshot.docs);
-        if(querySnapshot.docs.length > 0){
-                const docRef = doc(db, "cart", id);
-                data.quantity = data.quantity + number;
-                await updateDoc(docRef, data).then();
+        console.log("hdvkfhdhvfgkjvbhfg", querySnapshot.docs);
+        if (querySnapshot.docs.length > 0) {
+            const docRef = doc(db, "cart", id);
+            data.quantity = data.quantity + number;
+            await updateDoc(docRef, data).then();
+        } else {
+            let response = await addDoc(collection(db, tableName), data).then();
         }
-        else{
-            let response  = await addDoc(collection(db, tableName), data).then();
-        }
-        
-        // console.log("reso :: ",response)
-    }
-    catch (err){
-            console.log("error comes", err);
+
+    } catch (err) {
+        console.log("error comes", err);
     }
 }
 
+
+export const updateProduct = async (table, data, type = "update") => {
+    try {
+        const cartProduct = collection(db, table)
+        const productPresent = query(cartProduct, and(where('productId', '==', data.productId), where('id', '==', data.id)))
+        const querySnapshot = await getDocs(productPresent);
+        let id;
+        querySnapshot.docs.map((doc) => {
+            id = doc.id;
+        })
+        if (querySnapshot.docs.length > 0 && type === "update") {
+            const docRef = doc(db, "cart", id);
+            await updateDoc(docRef, data).then();
+            return true
+        }
+        if (querySnapshot.docs.length > 0 && type === "delete") {
+            const docRef = doc(db, "cart", id);
+            await deleteDoc(docRef, id).then();
+            return true
+        }
+    } catch (e) {
+        return false
+    }
+}
 export const addData = async (tableName, data) => {
     try {
-        let response  =await addDoc(collection(db, tableName), data).then();
+        let response = await addDoc(collection(db, tableName), data).then();
     } catch (err) {
         console.log(err)
         return false
