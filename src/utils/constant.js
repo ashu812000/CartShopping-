@@ -1,3 +1,5 @@
+import {toast} from "react-toastify";
+
 export const gift=[{
     imageUrl:"https://www.sendgiftsahmedabad.com/pub/media/catalog/product/cache/fe2a752764b2352ecdbaaa90a203554f/5/_/5_2.jpg"
 },{
@@ -21,3 +23,8 @@ export const gift=[{
 },{
     imageUrl:"https://m.media-amazon.com/images/I/715igBNcyEL._AC_UF1000,1000_QL80_.jpg"
 },]
+
+
+export const successToast = (message) => {
+    toast.success(message)
+}

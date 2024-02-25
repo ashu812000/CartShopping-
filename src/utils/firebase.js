@@ -48,15 +48,11 @@ export async function findWithNWhere(tableName, whereArr) {
 }
 
 export const addData = async (tableName, data) => {
-
     try {
         let response  =await addDoc(collection(db, tableName), data).then();
-        console.log("Response :: ",response)
     } catch (err) {
         console.log(err)
         return false
     }
     return true;
-
-
 }

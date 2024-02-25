@@ -9,28 +9,36 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
-import {db, findWhere} from '../utils/firebase';
+import {addData, db, findWhere} from '../utils/firebase';
 import {collection, getDocs, query, where} from "firebase/firestore";
 import {FormControl} from "@mui/material";
-
+import {useNavigate} from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+    const navigate = useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         let response = await findWhere("users", "email", "==", data.get("email"))
+        console.log("response :: ", response)
         if (response.length) {
             const colRef = collection(db, "users");
             const querySnapshot = await getDocs(query(colRef, where('email', '==', data.get("email"))));
             querySnapshot.forEach((doc) => {
                 const userData = doc.data();
                 if (userData.password === data.get("password")) {
-                    console.log("yes :: ")
-                    // @todo navigate to home
+                    localStorage.setItem('email', userData.email);
+                    navigate('/home');
                 }
             });
+        } else {
+            let response = await addData("users", {email: data.get("email"), password: data.get("password")})
+            if (response === true) {
+                localStorage.setItem('email', data.get("email"));
+                navigate('/home');
+            }
         }
     };
 

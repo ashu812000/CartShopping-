@@ -1,33 +1,40 @@
-import { Box } from '@mui/material';
 import './App.css';
-import Page from './components/Page';
-import { gift } from './utils/constant';
-import Header from './components/header';
 import "./style.css"
-import Footer from './components/footer';
 import SignIn from './components/signIn';
+import {Route, Routes, useNavigate} from 'react-router-dom';
+import {Home} from "./components/home";
+import {Cart} from "./components/cart";
+import {useEffect, useState} from "react";
+import Header from "./components/header";
+import Footer from "./components/footer";
+import {ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+import {OrderHistory} from "./components/orderHistory";
 
 function App() {
-  return (
-    <div className="App">
-      <Header/>
-      <SignIn/>
-      <Box className="homePage">
-     
-        {/* <Page imageUrl={gift[0].imageUrl}/>
-        <Page imageUrl={gift[1].imageUrl}/>
-        <Page imageUrl={gift[2].imageUrl}/>
-        <Page imageUrl={gift[3].imageUrl}/>
-        <Page imageUrl={gift[4].imageUrl}/>
-        <Page imageUrl={gift[5].imageUrl}/>
-        <Page imageUrl={gift[6].imageUrl}/>
-        <Page imageUrl={gift[7].imageUrl}/>
-        <Page imageUrl={gift[8].imageUrl}/>̵ */}
-        {/* <Page /> */}
-      </Box>
-      <Footer/>
-    </div>
-  );
+    const [user, setUser] = useState()
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('email');
+        if (!storedUser) {
+            navigate('/'); // Redirect to the sign-in page
+        }
+        setUser(storedUser);
+    }, [navigate]);
+    return (
+        <div className="App">
+            <ToastContainer/>
+            {user && <Header/>}
+            <Routes>
+                <Route path="/" element={<SignIn/>}/>
+                <Route path="/home" element={user ? <Home/> : <SignIn/>}/>
+                <Route path="/cart" element={user ? <Cart/> : <SignIn/>}/>
+                <Route path="/orderHistory" element={user ? <OrderHistory/> : <SignIn/>}/>
+            </Routes>
+            {user && <Footer/>}
+        </div>
+    );
 }
 
 export default App;
