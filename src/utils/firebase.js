@@ -1,9 +1,7 @@
 // Import the functions you need from the SDKs you need
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import {getAuth} from "firebase/auth";
-import {addDoc, collection, doc, getDocs, getFirestore, query, setDoc, where} from "firebase/firestore";
+import {addDoc, updateDoc, collection, doc, getDocs, getFirestore, query, setDoc, where, and} from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -45,6 +43,48 @@ export async function findWithNWhere(tableName, whereArr) {
         }
     );
     return res;
+}
+
+export const updateProductCart = async (tableName, data) =>{
+    try{
+
+    }
+    catch {
+
+    }
+}
+
+export const addProduct = async (tableName, data) => {
+    try{
+        
+        const cartProduct = collection(db, 'cart')
+        
+        const productPresent = query(cartProduct , and(where('productId', '==' , data.productId), where('id', '==', data.id)))
+        
+        const querySnapshot = await getDocs(productPresent);
+        let id;
+        let number;
+        querySnapshot.docs.map((doc)=>{
+            console.log("doc data :: ",doc.data(), doc.id)
+            number = doc.data().quantity;
+            id = doc.id;
+        })
+        console.log("vbdhfkbvkjdfnvjkdjkn")
+        console.log("hdvkfhdhvfgkjvbhfg",querySnapshot.docs);
+        if(querySnapshot.docs.length > 0){
+                const docRef = doc(db, "cart", id);
+                data.quantity = data.quantity + number;
+                await updateDoc(docRef, data).then();
+        }
+        else{
+            let response  = await addDoc(collection(db, tableName), data).then();
+        }
+        
+        // console.log("reso :: ",response)
+    }
+    catch (err){
+            console.log("error comes", err);
+    }
 }
 
 export const addData = async (tableName, data) => {

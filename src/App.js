@@ -10,6 +10,7 @@ import Footer from "./components/footer";
 import {ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import {OrderHistory} from "./components/orderHistory";
+import { Box } from '@mui/material';
 
 function App() {
     const [user, setUser] = useState()
@@ -25,7 +26,12 @@ function App() {
     return (
         <div className="App">
             <ToastContainer/>
+            <Box sx={{
+              width: "100%"
+
+            }}>
             {user && <Header/>}
+            </Box>
             <Routes>
                 <Route path="/" element={<SignIn/>}/>
                 <Route path="/home" element={user ? <Home/> : <SignIn/>}/>
