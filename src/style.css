@@ -17,6 +17,7 @@
 .cart-icon {
     display: flex;
     padding-right: 40px;
+    align-items: center;
     gap: 15px;
     float: right;
 }
