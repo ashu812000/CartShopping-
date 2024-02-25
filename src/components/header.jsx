@@ -8,7 +8,7 @@ const Header = () => {
     const navigate = useNavigate();
     return (
         <Box className="header">
-            <Box className="company-name" onClick={() => navigate("/")}>Gift kart</Box>
+            <Box className="company-name" onClick={() => navigate("/home")}> Shopping Cart</Box>
             <Box className="cart-icon">
                 <Box className="order-history" onClick={() => navigate("/orderHistory")}>Order History</Box>
                 <ShoppingCartIcon sx={{cursor: "pointer"}} size={24} onClick={() => navigate("/cart")}/>
