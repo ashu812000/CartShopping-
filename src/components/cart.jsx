@@ -120,11 +120,11 @@ export const Cart = () => {
                 justifyContent: "center",
                 alignItem: "center",
                 width: "100%",
-                gap: "10",
+                // gap: "10",
                 position: "fixed",
-                bottom: 33,
+                bottom: 0,
                 height: "50px",
-                margin: "10px 0 10px 0",
+                margin: "10px 0 0 0",
                 backgroundColor: "#d4cece"
             }}>
                 <Typography sx={{

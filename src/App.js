@@ -46,7 +46,7 @@ function App() {
                     <Route path="/cart" element={user ? <Cart/> : <SignIn/>}/>
                     <Route path="/orderHistory" element={user ? <OrderHistory/> : <SignIn/>}/>
                 </Routes>
-                {user && <Footer/>}
+                {/*{user && <Footer/>}*/}
             </div>
         </LoaderContext.Provider>
     );
