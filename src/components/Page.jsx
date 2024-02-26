@@ -4,10 +4,9 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function Page({products}) {
-    console.log(localStorage.getItem("email"))
   return (
     <Box sx={{ display: "flex", justifyContent: "center", gap: "10", padding: 1 }}>
-        <ToastContainer 
+        <ToastContainer
         />
       <Card sx={{ maxWidth: 345 }}>
         <CardMedia
@@ -28,7 +27,7 @@ export default function Page({products}) {
           </Typography>
         </CardContent>
         <CardActions sx={{display:"flex",justifyContent:"space-between"}}>
-          <Button 
+          <Button
                 onClick={()=>{
                    const data ={
                         productId: products.id,
@@ -41,7 +40,7 @@ export default function Page({products}) {
                     }
                     addProduct("cart", data).then(()=>{
                         toast.success("Item added to cart successfully")
-                    
+
                     });
                 }}
           size="small" variant="outlined" color="warning">Add To Cart</Button>

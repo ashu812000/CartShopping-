@@ -51,12 +51,9 @@ export const addProduct = async (tableName, data) => {
         let id;
         let number;
         querySnapshot.docs.map((doc) => {
-            console.log("doc data :: ", doc.data(), doc.id)
             number = doc.data().quantity;
             id = doc.id;
         })
-        console.log("vbdhfkbvkjdfnvjkdjkn")
-        console.log("hdvkfhdhvfgkjvbhfg", querySnapshot.docs);
         if (querySnapshot.docs.length > 0) {
             const docRef = doc(db, "cart", id);
             data.quantity = data.quantity + number;
@@ -66,8 +63,9 @@ export const addProduct = async (tableName, data) => {
         }
 
     } catch (err) {
-        console.log("error comes", err);
+        return false
     }
+    return true
 }
 
 
@@ -98,7 +96,26 @@ export const addData = async (tableName, data) => {
     try {
         let response = await addDoc(collection(db, tableName), data).then();
     } catch (err) {
-        console.log(err)
+        return false
+    }
+    return true;
+}
+
+
+export const deleteData = async (tableName, whereField, whereOpt, whereValue) => {
+    try {
+        const q = query(collection(db, tableName), where(whereField, whereOpt, whereValue));
+        const querySnapshot = await getDocs(q);
+        let res = [];
+        querySnapshot.forEach((doc) => {
+            res.push(doc.id);
+        });
+        if (res.length !== 0) res.map(async (data) => {
+            let documentRef = doc(db, "cart", data)
+            await deleteDoc(documentRef).then()
+        })
+        // let response = await deleteDoc(collection(db, tableName), where).then();
+    } catch (err) {
         return false
     }
     return true;

@@ -8,7 +8,6 @@ export const OrderHistory = () => {
 
     useEffect(() => {
         const orderHistoryData = findWhere("orders", "email", "==", localStorage.getItem("email")).then((res) => {
-            console.log(res)
             setCartItems(res)
         })
     }, [])

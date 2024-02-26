@@ -4,14 +4,16 @@ import {useContext, useEffect, useState} from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import {addData, findWhere, updateProduct} from "../utils/firebase";
+import {addData, deleteData, findWhere, updateProduct} from "../utils/firebase";
 import {LoaderContext} from "../utils/Context";
+import {useNavigate} from "react-router-dom";
 
 
 export const Cart = () => {
     const [cartData, setCartData] = useState([])
-    let {setShowLoader} = useContext(LoaderContext);
     const [totalAmount, setTotalAmount] = useState(0)
+    let {setShowLoader} = useContext(LoaderContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         getCartData().then((res) => {
@@ -75,7 +77,7 @@ export const Cart = () => {
                             <Grid container spacing={1} alignItems="center">
                                 <Grid item xs={1}>
                                     <img src={item.image} alt="logo" width={80} height={80}
-                                           />
+                                    />
                                 </Grid>
                                 <Grid item xs={3}>
                                     <Typography>{item.title}</Typography>
@@ -141,11 +143,21 @@ export const Cart = () => {
                     justifyContent: "center",
                     width: "50%"
                 }} onClick={() => {
-                    successToast("Order Placed Successfully")
+                    setShowLoader(true)
                     let data = {
                         email: localStorage.getItem("email"), items: cartData
                     }
-                    addData("orders", data).then()
+                    addData("orders", data).then((res) => {
+                        if (res === true) {
+                            successToast("Order Placed Successfully")
+                            deleteData("cart", "id", "==", localStorage.getItem("email")).then((res) => {
+                                if (res === true) setCartData([])
+                                setShowLoader(false)
+                                navigate("/orderHistory")
+                            })
+                        }
+                    })
+
                 }}>
                     CREATE ORDER
                 </Button>

@@ -22,7 +22,6 @@ export default function SignIn() {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         let response = await findWhere("users", "email", "==", data.get("email"))
-        console.log("response :: ", response)
         if (response.length) {
             const colRef = collection(db, "users");
             const querySnapshot = await getDocs(query(colRef, where('email', '==', data.get("email"))));
